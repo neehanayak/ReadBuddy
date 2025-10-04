@@ -59,3 +59,7 @@ Reading primary literature is hard. Jargon, acronyms, and field-specific phrases
 ## Contributing
 
 Ideas, issues, and pull requests are welcome. The goal is to keep this tool simple, fast, and genuinely useful for students.
+
+---
+
+> Made with ❤️ to help students read research papers more effectively
