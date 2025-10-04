@@ -1,170 +1,139 @@
-# ReadBuddy
+# 📚 ReadBuddy
 
-A lightweight Chrome extension + backend that helps students understand dense terminology in research papers via AI-powered, context-aware explanations.
+**ReadBuddy** is a lightweight Chrome extension that helps students understand dense terminology and context-specific phrases in research papers using **AI-powered explanations**.  
+Get instant, plain-English insights **without leaving the paper** — making academic reading faster and more accessible.
 
-## Features
+---
 
-- Highlight → right-click → “Explain with AI” flow
-- Short, plain-English explanations with “Explain further” and “Ask follow-up”
-- FastAPI backend with CORS and health checks
-- Ready for RAG (Pinecone/Chroma) and multiple LLMs (OpenAI/Anthropic)
-- Dockerized services and basic CI
+## 🎯 Problem
 
-## Project Structure
-## Two‑Week Plan (Daily Goals)
+Students often struggle with:
 
-Week 1 — Backend Core + RAG Pipeline  
-- Day 1: Project setup  
-  - Create GitHub repo, set up .env.example  
-  - Scaffold repo structure (backend/, frontend/, docker-compose.yml)  
-  - Setup Python virtual env + install FastAPI, Uvicorn  
-  - Run “Hello World” FastAPI server
-- Day 2: Backend APIs skeleton  
-  - Set up routers/, services/  
-  - Create /health endpoint  
-  - Add .gitignore, requirements.txt  
-  - CI skeleton (GitHub Actions basic test to run pytest --version)
-- Day 3: LLM abstraction layer  
-  - Implement LLMProvider for OpenAI  
-  - Write /query endpoint (non-streaming)
-- Day 4: Vector DB integration  
-  - Add Pinecone or Chroma support (vectorstore.py)  
-  - /ingest endpoint (upload → chunk → embed → store) with metadata
-- Day 5: RAG pipeline (non-streaming)  
-  - Ingest → retrieve context → call LLM → answer
-- Day 6: Streaming responses  
-  - Upgrade /query to stream tokens via StreamingResponse
-- Day 7: Add second LLM  
-  - Anthropic or local  
-  - .env switch LLM_PROVIDER=anthropic|openai|local
+- Dense academic terminology in research papers  
+- Context-specific phrases that require domain knowledge  
+- Constantly switching between papers and search engines  
+- Loss of reading flow and comprehension  
 
-Week 2 — Frontend + Analytics + Deployment  
-- Day 8: Frontend scaffold (Next.js / Tailwind)  
-- Day 9: Streaming chat UI  
-- Day 10: Analytics logging (Backend → Postgres)  
-- Day 11: Analytics dashboard (Frontend)  
-- Day 12: Dockerization (both services + db)  
-- Day 13: CI/CD (build/push images, optional deploy)  
-- Day 14: Wrap-up + Docs + smoke tests
+---
 
-Milestones  
-- End of Week 1 → RAG backend service working (local docs + OpenAI/Anthropic)  
-- End of Week 2 → Full platform: streaming chat UI, analytics, Dockerized, ready to deploy
+## 💡 Solution
 
-## Prerequisites
+**ReadBuddy** provides fast, context-aware explanations directly in your browser:
 
-- Python 3.10+ (3.11 recommended)
-- Node.js 18+ (for frontend, in Week 2)
-- Docker & Docker Compose (optional, for containerized dev)
-- Git
+1. Highlight any phrase in a research paper  
+2. Right-click → **“Explain with AI”**  
+3. Get a short, plain-English explanation instantly  
+4. Choose:
+   - 🧩 **Explain further** – get more detailed insight  
+   - 💬 **Ask follow-up** – open a mini chat  
+   - ✅ **Got it** – dismiss  
 
-## Quickstart (Backend, Local)
+No context switching. No interruptions. Just seamless learning.
 
-1) Clone and enter repo:
+---
+
+## ✨ Features
+
+- ⚡ **Instant Explanations:** Highlight → right-click → understand  
+- 🧠 **Plain English:** 2–3 sentence, clarity-optimized explanations  
+- 🔁 **Follow-up Options:** “Explain further”, “Ask follow-up”, “Got it”  
+- 🔍 **Context-Aware (RAG):** Uses document context for accuracy  
+- 🤖 **Multi-LLM Support:** Works with OpenAI, Anthropic, or local models  
+- 🪶 **Fast & Lightweight:** Minimal UI, maximum speed  
+
+---
+
+## 🏗️ Architecture
+
+### How It Works
+
+```text
+[User highlights text in webpage]
+        ↓
+[Right-click → "Explain with AI"]
+        ↓
+[Extension captures selection + page context]
+        ↓
+[POST request → FastAPI Backend]
+        ↓
+[Backend retrieves relevant context (RAG)]
+        ↓
+[LLM generates explanation]
+        ↓
+[Response streamed back to extension]
+        ↓
+[Floating card appears with explanation]
+
+┌──────────────────────────────┐
+│ Explanation (2-3 sentences) │
+│ [Explain further]           │
+│ [Ask follow-up]             │
+│ [Got it]                    │
+└──────────────────────────────┘
+
+## 🧰 Tech Stack
+
+### **Frontend / Extension**
+- Chrome Extension (Manifest V3)
+- Vanilla JavaScript (content scripts, background service worker)
+- CSS (for floating UI cards)
+
+### **Backend**
+- FastAPI (Python)
+- OpenAI / Anthropic APIs
+- Pinecone / ChromaDB (Vector Database for RAG)
+- PostgreSQL (analytics and logging)
+- Docker & Docker Compose
+
+### **Optional Frontend Dashboard**
+- Next.js
+- Tailwind CSS
+- Recharts (for analytics visualization)
+
+---
+
+## 📁 Project Structure
+
+```plaintext
+readbuddy/
+├── backend/              # FastAPI backend service
+│   ├── routers/          # API route handlers
+│   ├── services/         # Business logic (LLM, RAG, embeddings)
+│   ├── models/           # Database models
+│   └── main.py           # FastAPI entry point
+├── extension/            # Chrome extension
+│   ├── manifest.json     # Extension configuration
+│   ├── background.js     # Service worker (context menu, API calls)
+│   ├── content.js        # Content script (UI injection)
+│   └── popup.html        # Extension popup (optional)
+├── frontend/             # Next.js dashboard (optional)
+├── docker-compose.yml    # Docker orchestration
+├── .env.example          # Environment variables template
+└── README.md
+
+# 🚀 Getting Started
+
+## 🧩 Prerequisites
+- **Python 3.10+**
+- **Node.js 18+** (for frontend dashboard, optional)
+- **Docker & Docker Compose** (optional)
+- **OpenAI or Anthropic API key**
+
+---
+
+## ⚙️ Backend Setup
+
+### 1️⃣ Clone the repository
 ```bash
-git clone <your-repo-url> readbuddy
-cd readbuddy/backend
-Create and activate virtual environment:
-bash
-Copy
-python -m venv venv
-# macOS/Linux
-source venv/bin/activate
-# Windows PowerShell
-# .\venv\Scripts\Activate.ps1
-Install dependencies:
-bash
-Copy
-pip install --upgrade pip
-pip install -r requirements.txt
-Set environment variables:
-bash
-Copy
-cd ..
+git clone https://github.com/neehanayak/ReadBuddy.git
+cd ReadBuddy
+
+### 2️⃣ Set up environment variables
+```bash
 cp .env.example .env
-# Open .env and fill values as needed, e.g. ALLOWED_ORIGINS for local testing
-Run the API:
-bash
-Copy
-cd backend
-# Option A
-python main.py
-# Option B
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-Verify:
-Root: http://localhost:8000/
-Health: http://localhost:8000/health
-Swagger: http://localhost:8000/docs
-ReDoc: http://localhost:8000/redoc
-Expected root response:
+# Edit .env and add your API keys
 
-json
-Copy
-{ "message": "Hello World from ReadBuddy API!", "status": "running", "version": "1.0.0" }
-Environment Variables
-Copy .env.example to .env and adjust as needed:
 
-LLM settings
-LLM_PROVIDER=openai | anthropic | local
-OPENAI_API_KEY
-ANTHROPIC_API_KEY
-Vector DB
-VECTOR_DB=pinecone | chroma
-PINECONE_API_KEY
-PINECONE_ENVIRONMENT
-PINECONE_INDEX_NAME=readbuddy
-Database
-DATABASE_URL=postgresql://postgres:postgres@db:5432/readbuddy
-Server
-BACKEND_PORT=8000
-FRONTEND_PORT=3000
-CORS
-ALLOWED_ORIGINS=http://localhost:3000,chrome-extension://*
-Run with Docker (Backend + DB + Frontend scaffold)
-From repo root:
 
-bash
-Copy
-docker-compose up --build
-Backend: http://localhost:8000
-Frontend (placeholder until Day 8): http://localhost:3000
-Postgres: localhost:5432 (user: postgres, pass: postgres, db: readbuddy)
-Stop:
 
-bash
-Copy
-docker-compose down
-CI
-A basic GitHub Actions workflow is included:
 
-Checks out the repo
-Installs backend dependencies
-Runs pytest --version (placeholder until tests are added)
-Runs flake8 (syntax checks + warnings)
-See .github/workflows/ci.yml.
-
-Roadmap Details
-LLM Abstraction: Unified interface to plug OpenAI, Anthropic, or a local model
-RAG: Ingestion, chunking, embeddings, metadata (chunk number, source), retrieval
-Streaming: Token-streaming endpoint for responsive UI
-Analytics: Log query text, response length, latency, provider; aggregate for dashboard
-Deployment: Docker images, optional push to Docker Hub, deploy to Render/Fly.io/ECS
-Endpoints (Day 1)
-GET / — Hello World + service status
-GET /health — Health check
-Will be expanded in later days to include:
-
-POST /query — Ask question (non-streaming → streaming)
-POST /ingest — Upload documents for RAG
-GET /analytics/summary — Stats for dashboard
-Extension Notes (Upcoming)
-background.js: capture selection, context menu, send POST to backend
-content script: inject floating card with explanation + buttons
-chat box/modal for follow-ups; local or backend-stored memory
-Contributing
-Create feature branches off develop
-Run flake8 and ensure CI is green
-Add tests where feasible
-PRs should include a brief description and screenshots/logs for UI/behavioral changes
-License
-MIT
